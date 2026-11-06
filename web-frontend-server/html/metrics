@@ -1,0 +1,20 @@
+# Endpoint /metrics de Prometheus scrape web-frontend-server (mo rong 7).
+# nginx khong tu xuat metric Prometheus; file tinh nay giu dung dinh dang
+# text exposition de target web bao UP. Muon so lieu that: them
+# nginx-prometheus-exporter + stub_status (xem HUONG-DAN-MO-RONG.md).
+
+# HELP web_up Web server dang phuc vu (1 = up)
+# TYPE web_up gauge
+web_up 1
+
+# HELP web_requests_total Tong so request da phuc vu (gia lap)
+# TYPE web_requests_total counter
+web_requests_total 1284
+
+# HELP web_response_time_seconds Thoi gian phan hoi trung binh (gia lap)
+# TYPE web_response_time_seconds gauge
+web_response_time_seconds 0.012
+
+# HELP web_static_files So file tinh dang duoc phuc vu
+# TYPE web_static_files gauge
+web_static_files 18

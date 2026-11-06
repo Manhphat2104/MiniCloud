@@ -1,0 +1,5 @@
+# Dữ liệu runtime (MinIO object, MariaDB, Keycloak H2...) không commit
+object-storage-server/data/*
+!object-storage-server/data/.gitkeep
+relational-database-server/data/
+authentication-identity-server/data/

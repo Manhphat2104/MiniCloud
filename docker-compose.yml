@@ -1,0 +1,192 @@
+Remove-Item -Recurse -Force .gitnetworks:
+  cloud-net:
+    name: cloud-net
+
+volumes:
+  loki-data:
+  grafana-data:
+
+services:
+  web-frontend-server:
+    build: ./web-frontend-server
+    image: phathuynh2104/web:dev
+    container_name: web-frontend-server
+    hostname: web-frontend-server1
+    networks:
+      cloud-net:
+        aliases: [web, web-frontend-server1]
+    ports: ["8080:80"]
+    restart: unless-stopped
+
+  # Mo rong 10: web server thu 2 de test load balancing Round Robin.
+  # Dung chung image, chi khac hostname -> badge "Served by ..." khac nhau.
+  web-frontend-server2:
+    build: ./web-frontend-server
+    image: phathuynh2104/web:dev
+    container_name: web-frontend-server2
+    hostname: web-frontend-server2
+    networks:
+      cloud-net:
+        aliases: [web2]
+    ports: ["8082:80"]
+    restart: unless-stopped
+
+  application-backend-server:
+    build: ./application-backend-server
+    image: phathuynh2104/app:dev
+    container_name: application-backend-server
+    networks:
+      cloud-net:
+        aliases: [app-server, app]
+    ports: ["8085:8081"]
+    environment:
+      OIDC_ISSUER: "http://localhost:8081/realms/realm_523H0167"
+      OIDC_JWKS_URL: "http://authentication-identity-server:8080/realms/realm_523H0167/protocol/openid-connect/certs"
+      OIDC_AUDIENCE: "account"
+      DB_HOST: "relational-database-server"
+      DB_USER: "root"
+      DB_PASSWORD: "root"
+      DB_NAME: "studentdb"
+    restart: unless-stopped
+
+  relational-database-server:
+    image: mariadb:11
+    container_name: relational-database-server
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: minicloud
+    volumes:
+      - ./relational-database-server/init:/docker-entrypoint-initdb.d:ro 
+    ports: ["3306:3306"]
+    networks:
+      cloud-net:
+        aliases: [db, mysql]
+    restart: unless-stopped
+
+  authentication-identity-server:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: authentication-identity-server
+    command: ["start-dev"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: "http://localhost:8081"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: "xforwarded"
+    ports: ["8081:8080"]
+    volumes:
+      - ./authentication-identity-server/data:/opt/keycloak/data
+    networks:
+      cloud-net:
+        aliases: [keycloak, auth]
+    restart: unless-stopped
+
+  object-storage-server:
+    image: bitnamilegacy/minio:2025.3.12
+    container_name: object-storage-server
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_DATA_DIR: /data
+      MINIO_CONSOLE_PORT_NUMBER: "9001"
+      MINIO_SKIP_CLIENT: "yes"
+    volumes:
+      - ./object-storage-server/data:/data
+    ports: ["9000:9000", "9001:9001"]
+    networks:
+      cloud-net:
+        aliases: [minio, s3, storage]
+    restart: unless-stopped
+
+  internal-dns-server:
+    image: internetsystemsconsortium/bind9:9.18
+    container_name: internal-dns-server
+    ports: ["1053:53/udp", "1053:53/tcp"]
+    volumes:
+      - ./internal-dns-server/named.conf:/etc/bind/named.conf:ro
+      - ./internal-dns-server/named.conf.options:/etc/bind/named.conf.options:ro
+      - ./internal-dns-server/named.conf.local:/etc/bind/named.conf.local:ro
+      - ./internal-dns-server/db.cloud.local:/etc/bind/db.cloud.local:ro
+    networks:
+      cloud-net:
+        aliases: [dns-server, dns]
+    restart: unless-stopped
+
+  monitoring-node-exporter-server:
+    image: prom/node-exporter:latest
+    container_name: monitoring-node-exporter-server
+    ports: ["9100:9100"]
+    networks:
+      cloud-net:
+        aliases: [node-exporter]
+    restart: unless-stopped
+
+  monitoring-prometheus-server:
+    image: prom/prometheus:latest
+    container_name: monitoring-prometheus-server
+    ports: ["9090:9090"]
+    volumes:
+      - ./monitoring-prometheus-server/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      cloud-net:
+        aliases: [prometheus]
+    restart: unless-stopped
+
+  monitoring-logging-server:
+    image: grafana/loki:3.0.0
+    container_name: monitoring-logging-server
+    command: -config.file=/etc/loki/local-config.yaml
+    ports: ["3100:3100"]
+    volumes:
+      - ./monitoring-grafana-dashboard-server/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    networks:
+      cloud-net:
+        aliases: [loki]
+    restart: unless-stopped
+
+  monitoring-promtail:
+    image: grafana/promtail:3.0.0
+    container_name: monitoring-promtail
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./monitoring-grafana-dashboard-server/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      cloud-net:
+        aliases: [promtail]
+    restart: unless-stopped
+
+  monitoring-grafana-dashboard-server:
+    image: grafana/grafana:latest
+    container_name: monitoring-grafana-dashboard-server
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports: ["3000:3000"]
+    volumes:
+      - ./monitoring-grafana-dashboard-server/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
+    networks:
+      cloud-net:
+        aliases: [grafana]
+    restart: unless-stopped
+
+  api-gateway-proxy-server:
+    image: nginx:stable
+    container_name: api-gateway-proxy-server
+    depends_on:
+      - web-frontend-server
+      - web-frontend-server2
+      - application-backend-server
+      - authentication-identity-server
+    ports: ["80:80"]
+    volumes:
+      - ./api-gateway-proxy-server/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      cloud-net:
+        aliases: [proxy, gateway]
+    restart: unless-stopped

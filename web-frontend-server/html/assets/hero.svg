@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="Minh hoạ các bong bóng thuỷ tinh trên nền tím">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3d2357"/>
+      <stop offset=".55" stop-color="#2a1945"/>
+      <stop offset="1" stop-color="#170f2a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="70%" cy="20%" r="75%">
+      <stop offset="0" stop-color="#d9b8ff" stop-opacity=".55"/>
+      <stop offset=".55" stop-color="#a97ce0" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#a97ce0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glass" cx="30%" cy="26%" r="72%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".92"/>
+      <stop offset=".28" stop-color="#f0e2ff" stop-opacity=".55"/>
+      <stop offset=".62" stop-color="#c39df5" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity=".06"/>
+    </radialGradient>
+    <radialGradient id="glass2" cx="34%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".75"/>
+      <stop offset=".4" stop-color="#d8c4ff" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#8f6bc9" stop-opacity=".08"/>
+    </radialGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="16"/>
+    </filter>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect width="800" height="600" fill="url(#glow)"/>
+
+  <!-- bokeb nền -->
+  <g filter="url(#soft)" opacity=".55">
+    <circle cx="600" cy="120" r="90" fill="#c9a7f5" opacity=".45"/>
+    <circle cx="680" cy="330" r="70" fill="#e6c9ff" opacity=".30"/>
+    <circle cx="500" cy="430" r="110" fill="#8f6bc9" opacity=".35"/>
+    <circle cx="150" cy="470" r="80" fill="#a97ce0" opacity=".22"/>
+  </g>
+
+  <!-- cac bong bong thu tinh -->
+  <g stroke="#ffffff" stroke-opacity=".28" stroke-width="1.5">
+    <circle cx="300" cy="300" r="150" fill="url(#glass)"/>
+    <circle cx="520" cy="215" r="96" fill="url(#glass2)"/>
+    <circle cx="575" cy="400" r="118" fill="url(#glass)"/>
+    <circle cx="420" cy="470" r="62" fill="url(#glass2)"/>
+    <circle cx="215" cy="150" r="54" fill="url(#glass2)"/>
+    <circle cx="655" cy="120" r="42" fill="url(#glass2)"/>
+    <circle cx="700" cy="475" r="58" fill="url(#glass2)"/>
+    <circle cx="130" cy="360" r="38" fill="url(#glass2)"/>
+  </g>
+
+  <!-- diem sang -->
+  <g fill="#ffffff" opacity=".85">
+    <ellipse cx="252" cy="238" rx="26" ry="17" transform="rotate(-25 252 238)" opacity=".75"/>
+    <ellipse cx="498" cy="180" rx="16" ry="10" transform="rotate(-25 498 180)" opacity=".6"/>
+    <ellipse cx="540" cy="350" rx="20" ry="13" transform="rotate(-25 540 350)" opacity=".5"/>
+    <circle cx="392" cy="452" r="7" opacity=".55"/>
+    <circle cx="200" cy="136" r="6" opacity=".5"/>
+  </g>
+</svg>

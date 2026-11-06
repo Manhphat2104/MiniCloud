@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Huỳnh Mạnh Phát",
+    "major": "Kỹ thuật phần mềm",
+    "gpa": 3.52
+  },
+  {
+    "id": 2,
+    "name": "Nguyễn Văn An",
+    "major": "Khoa học máy tính",
+    "gpa": 3.31
+  },
+  {
+    "id": 3,
+    "name": "Trần Thị Bình",
+    "major": "Hệ thống thông tin",
+    "gpa": 3.08
+  },
+  {
+    "id": 4,
+    "name": "Lê Minh Châu",
+    "major": "An toàn thông tin",
+    "gpa": 3.76
+  },
+  {
+    "id": 5,
+    "name": "Phạm Quốc Dũng",
+    "major": "Trí tuệ nhân tạo",
+    "gpa": 3.44
+  }
+]

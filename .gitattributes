@@ -1,0 +1,2 @@
+# Giữ line-ending LF trong repo để file cấu hình chạy đúng trên Linux/EC2
+* text=auto eol=lf

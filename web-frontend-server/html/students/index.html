@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách sinh viên - MyMiniCloud</title>
+  <link rel="stylesheet" href="students.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap inner">
+      <a class="brand" href="/">MyMiniCloud</a>
+      <nav class="nav">
+        <a href="/blog/">Blog cá nhân</a>
+        <a href="/students/" aria-current="page">Sinh viên</a>
+      </nav>
+      <span class="spacer"></span>
+      <nav class="nav-right">
+        <a href="/">Trang chủ</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+  
+    <h1>Danh sách sinh viên</h1>
+
+    <h2>Bài 2 · students.json</h2>
+    <section class="panel"><div id="json-table" class="state">Đang tải…</div></section>
+
+    <div class="section-head">
+      <h2>Bài 3 · Database studentdb</h2>
+      <button class="btn btn-primary" id="addBtn" type="button">+ Thêm sinh viên</button>
+    </div>
+    <section class="panel"><div id="db-table" class="state">Đang tải…</div></section>
+  </main>
+
+  <dialog id="dlg">
+    <form id="form">
+      <h3 id="dlgTitle">Thêm sinh viên</h3>
+      <label>Mã SV<input name="student_id" maxlength="10" required></label>
+      <label>Họ tên<input name="fullname" maxlength="100" required></label>
+      <label>Ngày sinh<input name="dob" type="date"></label>
+      <label>Chuyên ngành<input name="major" maxlength="50"></label>
+      <div id="formErr" class="form-err" hidden></div>
+      <div class="form-actions">
+        <button type="button" class="btn" id="cancelBtn">Hủy</button>
+        <button type="submit" class="btn btn-primary">Lưu</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+
+    const fmtDate = (iso) => {
+      if (!iso) return '';
+      const [y, m, d] = String(iso).split('-');
+      return d && m && y ? `${d}/${m}/${y}` : esc(iso);
+    };
+
+    const table = (columns, rowsHtml) => `
+      <div class="table-wrap"><table>
+        <thead><tr>${columns.map((c) => `<th>${c}</th>`).join('')}</tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table></div>`;
+
+    const showError = (el, msg) => { el.className = 'state error'; el.textContent = msg; };
+
+    /* ---------- Bài 2: students.json (chỉ đọc) ---------- */
+    async function loadJson() {
+      const el = document.getElementById('json-table');
+      try {
+        const res = await fetch('/api/student', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const rows = Array.isArray(data) ? data : (data.students || []);
+        el.className = '';
+        el.innerHTML = table(['#', 'Họ tên', 'Chuyên ngành', 'GPA'],
+          rows.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.name)}</td><td>${esc(r.major)}</td><td>${Number(r.gpa || 0).toFixed(2)}</td></tr>`).join(''));
+      } catch (e) { showError(el, 'Không tải được dữ liệu (' + e.message + ').'); }
+    }
+
+    /* ---------- Bài 3: MariaDB (CRUD) ---------- */
+    const API = '/api/students-db';
+    const $db = document.getElementById('db-table');
+    const dlg = document.getElementById('dlg');
+    const form = document.getElementById('form');
+    const formErr = document.getElementById('formErr');
+    let dbRows = [];
+    let editingId = null;
+
+    async function loadDb() {
+      try {
+        const res = await fetch(API, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        dbRows = data.students || [];
+        if (!dbRows.length) { $db.className = 'state'; $db.textContent = 'Chưa có dữ liệu.'; return; }
+        $db.className = '';
+        $db.innerHTML = table(['Mã SV', 'Họ tên', 'Ngày sinh', 'Chuyên ngành', ''],
+          dbRows.map((r) => `<tr>
+            <td>${esc(r.student_id)}</td><td>${esc(r.fullname)}</td>
+            <td>${fmtDate(r.dob)}</td><td>${esc(r.major)}</td>
+            <td class="actions">
+              <button class="btn btn-sm" data-act="edit" data-id="${r.id}" type="button">Sửa</button>
+              <button class="btn btn-sm btn-danger" data-act="del" data-id="${r.id}" type="button">Xóa</button>
+            </td></tr>`).join(''));
+      } catch (e) { showError($db, 'Không tải được dữ liệu (' + e.message + ').'); }
+    }
+
+    function openForm(row) {
+      editingId = row ? row.id : null;
+      document.getElementById('dlgTitle').textContent = row ? 'Sửa sinh viên' : 'Thêm sinh viên';
+      form.student_id.value = row ? row.student_id || '' : '';
+      form.fullname.value = row ? row.fullname || '' : '';
+      form.dob.value = row ? row.dob || '' : '';
+      form.major.value = row ? row.major || '' : '';
+      formErr.hidden = true;
+      dlg.showModal();
+    }
+
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const body = {
+        student_id: form.student_id.value.trim(),
+        fullname: form.fullname.value.trim(),
+        dob: form.dob.value || null,
+        major: form.major.value.trim()
+      };
+      try {
+        const res = await fetch(editingId ? `${API}/${editingId}` : API, {
+          method: editingId ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+        dlg.close();
+        loadDb();
+      } catch (e) {
+        formErr.textContent = e.message;
+        formErr.hidden = false;
+      }
+    });
+
+    $db.addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('button[data-act]');
+      if (!btn) return;
+      const row = dbRows.find((r) => String(r.id) === btn.dataset.id);
+      if (!row) return;
+      if (btn.dataset.act === 'edit') return openForm(row);
+      if (!confirm(`Xóa sinh viên "${row.fullname}"?`)) return;
+      try {
+        const res = await fetch(`${API}/${row.id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'HTTP ' + res.status);
+        loadDb();
+      } catch (e) { alert('Không xóa được: ' + e.message); }
+    });
+
+    document.getElementById('addBtn').addEventListener('click', () => openForm(null));
+    document.getElementById('cancelBtn').addEventListener('click', () => dlg.close());
+
+    loadJson();
+    loadDb();
+  </script>
+</body>
+</html>

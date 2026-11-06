@@ -1,0 +1,29 @@
+server {
+  listen 80;
+  server_name _;
+
+  root /usr/share/nginx/html;
+  index index.html;
+
+  # Mo rong 10: cho biet request duoc phuc vu boi web server nao
+  add_header X-Served-By $hostname always;
+
+  location / { try_files $uri $uri/ =404; }
+
+  # Mo rong 7: endpoint de Prometheus scrape (job 'web')
+  location = /metrics {
+    default_type text/plain;
+    charset utf-8;
+    try_files $uri =404;
+  }
+
+  location ^~ /blog/ {
+    alias /usr/share/nginx/html/blog/;
+    index index.html;
+    autoindex off;
+  }
+
+  # Mo rong 10: hien thi ten web server o goc phai (de thay round robin)
+  sub_filter_once on;
+  sub_filter '</body>' '<div style="position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 11px;border-radius:8px;background:rgba(20,14,38,.85);color:#e6dcff;font:12px/1.4 system-ui,sans-serif;border:1px solid rgba(195,157,245,.45);box-shadow:0 8px 20px -12px #000">Served by <b>$hostname</b></div></body>';
+}

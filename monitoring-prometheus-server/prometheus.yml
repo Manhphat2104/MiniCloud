@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'node'
+    static_configs:
+      - targets: ['monitoring-node-exporter-server:9100']
+
+  # Mo rong 7: giam sat chinh web-frontend-server
+  - job_name: 'web'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['web-frontend-server:80']
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

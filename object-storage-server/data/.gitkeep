@@ -1,0 +1,2 @@
+Dữ liệu của MinIO được mount vào thư mục này (`./object-storage-server/data:/data`).
+Nội dung bên trong do container sinh ra, không commit lên git.
