@@ -2,4 +2,4 @@
 object-storage-server/data/*
 !object-storage-server/data/.gitkeep
 relational-database-server/data/
-authentication-identity-server/data/
+
