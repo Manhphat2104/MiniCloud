@@ -22,6 +22,8 @@ server {
 
   # Mo rong 10: cho biet request duoc phuc vu boi web server nao
   add_header X-Served-By $hostname always;
+  # Khong cache HTML -> F5 la thay ngay server khac (round robin)
+  add_header Cache-Control "no-store, no-cache, must-revalidate" always;
 
   location / { try_files $uri $uri/ =404; }
 
