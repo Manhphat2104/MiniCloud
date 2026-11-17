@@ -105,10 +105,12 @@ cd huynhmanhphatminiclouddemo
 copy .env.example .env          # PUBLIC_HOST=localhost
 docker compose pull web-frontend-server web-frontend-server2 application-backend-server
 docker compose up -d
-docker restart api-gateway-proxy-server
 ```
 
 Mở `http://localhost/`.
+
+> Nginx dùng `resolver 127.0.0.11` + `resolve` trong upstream nên **tự cập nhật IP**
+> khi container bị recreate — không cần restart proxy nữa.
 
 > Cổng **80** và **3306** phải trống. Nếu máy có Apache/MySQL, tắt trước.
 
@@ -130,7 +132,6 @@ nano .env                       # PUBLIC_HOST=<EC2_PUBLIC_IP>
 
 docker compose pull web-frontend-server web-frontend-server2 application-backend-server
 docker compose up -d --no-build
-docker restart api-gateway-proxy-server
 ```
 
 `PUBLIC_HOST` được dùng cho:
@@ -488,7 +489,7 @@ Luồng portal dùng **Authorization Code + PKCE**:
 
 | Hiện tượng | Nguyên nhân | Xử lý |
 |---|---|---|
-| `/api/*` trả 502 | Nginx giữ IP cũ sau khi container recreate | `docker restart api-gateway-proxy-server` |
+| `/api/*` trả 502 | Nginx giữ IP cũ (bản cấu hình cũ) | bản hiện tại tự resolve qua `resolver 127.0.0.11`; nếu vẫn lỗi: `docker restart api-gateway-proxy-server` |
 | Upload báo 413 | Body quá lớn | Kiểm tra `client_max_body_size 20m` ở proxy và web |
 | `/api/session/login` redirect về `localhost` trên EC2 | `PUBLIC_HOST` chưa đúng | sửa `.env`, `docker compose up -d authentication-identity-server application-backend-server` |
 | `/secure` 401 `Invalid issuer` | `OIDC_ISSUER` vẫn `localhost` | như trên |

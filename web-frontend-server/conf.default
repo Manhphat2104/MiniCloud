@@ -6,9 +6,14 @@ server {
   index index.html;
   client_max_body_size 20m;
 
+  # Docker DNS: tu resolve lai khi container backend bi recreate
+  resolver 127.0.0.11 valid=10s ipv6=off;
+
   # Mo rong: cho portal (trang chu) goi API khi truy cap truc tiep :8080/:8082
   location /api/ {
-    proxy_pass http://application-backend-server:8081/;
+    set $app_upstream application-backend-server;
+    rewrite ^/api/(.*)$ /$1 break;
+    proxy_pass http://$app_upstream:8081;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

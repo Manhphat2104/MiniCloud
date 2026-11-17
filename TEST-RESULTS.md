@@ -283,6 +283,17 @@ hướng dẫn lệnh `docker exec` tương ứng.
 - Upload kéo-thả hoặc chọn file, có thông báo lỗi rõ ràng (401/403/413/sai định dạng).
 - Trang `/students/` ẩn nút chỉnh sửa với viewer/khách, backend vẫn chặn 401/403.
 
+### 11.5. Chịu được việc recreate container
+
+Trước đây Nginx cache IP container lúc start → recreate backend là `/api/*` trả `502`.
+Đã sửa bằng `resolver 127.0.0.11 valid=10s ipv6=off` + `resolve` trong `upstream`.
+
+| Kiểm thử | Kết quả |
+|---|---|
+| `docker compose up -d --force-recreate application-backend-server` rồi gọi `/api/services` | `200` ngay sau 2s, không restart proxy |
+| Gọi cùng lúc `:80`, `:8080`, `:8082` sau khi recreate | cả ba đều `200` |
+| Round robin sau khi recreate 2 web server | vẫn luân phiên server1 / server2 |
+
 ## Ghi chú khi chụp ảnh minh chứng
 
 Trước khi chạy phải bảo đảm cổng 80 và 3306 còn trống (tắt Apache/MySQL nếu có),
