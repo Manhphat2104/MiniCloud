@@ -1,0 +1,125 @@
+/* Cloud Portal — ha tang + kho tai lieu + dang nhap */
+.portal-section{margin-top:46px}
+.portal-section .section-head{align-items:center}
+.ghost-btn{
+  border:1px solid rgba(195,157,245,.35);background:rgba(255,255,255,.05);
+  color:#d9c9f2;font:600 12.5px system-ui,sans-serif;padding:8px 14px;
+  border-radius:9px;cursor:pointer;transition:background .15s,border-color .15s;
+}
+.ghost-btn:hover{background:rgba(195,157,245,.14);border-color:rgba(195,157,245,.6)}
+.ghost-btn:disabled{opacity:.5;cursor:wait}
+
+/* ---- dang nhap ---- */
+.auth-area{display:flex;align-items:center;gap:10px;font-size:13px}
+.auth-area .who{display:flex;align-items:center;gap:7px;color:#eadfff;font-weight:600}
+.auth-area .role{
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;
+  border-radius:6px;background:rgba(195,157,245,.16);color:#dcc4ff;
+  border:1px solid rgba(195,157,245,.3);
+}
+.auth-area .role.admin{background:rgba(120,230,170,.14);color:#9ff0c4;border-color:rgba(120,230,170,.35)}
+.link-btn{
+  border:0;background:none;color:#b9a9d6;font:13px system-ui,sans-serif;
+  cursor:pointer;padding:2px 0;text-decoration:underline;text-underline-offset:3px;
+}
+.link-btn:hover{color:#fff}
+.login-btn{
+  display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:9px;
+  background:linear-gradient(135deg,#e6c9ff,#b78cf0);color:#2a1540;
+  font-weight:700;font-size:12.5px;text-decoration:none;
+  box-shadow:0 8px 20px -12px rgba(199,150,255,.9);
+}
+.login-btn:hover{filter:brightness(1.06)}
+
+/* ---- luoi 9 server ---- */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.svc-card{
+  position:relative;display:flex;flex-direction:column;gap:6px;
+  padding:16px 17px;border-radius:14px;text-decoration:none;color:inherit;
+  background:var(--panel);border:1px solid var(--line);
+  transition:transform .16s,border-color .16s,box-shadow .16s;
+  text-align:left;font:inherit;cursor:pointer;
+}
+a.svc-card:hover,.svc-card[data-hint]:hover{
+  transform:translateY(-2px);border-color:rgba(195,157,245,.55);
+  box-shadow:0 16px 34px -22px rgba(140,90,220,.95);
+}
+.svc-card .row1{display:flex;align-items:center;gap:8px}
+.svc-card .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.dot.up{background:#57e39a;box-shadow:0 0 0 4px rgba(87,227,154,.14)}
+.dot.down{background:#ff6b81;box-shadow:0 0 0 4px rgba(255,107,129,.14)}
+.svc-card h3{margin:0;font-size:.95rem;letter-spacing:-.01em}
+.svc-card .open-mark{margin-left:auto;color:#9c8cbb;font-size:13px}
+.svc-card .meta{margin:0;color:var(--muted);font-size:.76rem;line-height:1.5;word-break:break-all}
+.svc-card .port{
+  font-size:10px;letter-spacing:.08em;color:#c9b6ea;
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);
+  padding:2px 7px;border-radius:5px;align-self:flex-start;margin-top:3px;
+}
+.svc-card.is-down{opacity:.72}
+.svc-card.is-off{cursor:default}
+.svc-card.is-off:hover{transform:none;border-color:var(--line);box-shadow:none}
+.svc-summary{font-variant-numeric:tabular-nums}
+
+/* ---- kho tai lieu ---- */
+.upload-zone{
+  border:1.5px dashed rgba(195,157,245,.4);border-radius:14px;
+  padding:22px;text-align:center;color:#c9b9e4;font-size:.9rem;
+  background:rgba(195,157,245,.045);cursor:pointer;
+  transition:border-color .15s,background .15s;margin-bottom:16px;
+}
+.upload-zone.drag,.upload-zone:hover{border-color:rgba(195,157,245,.85);background:rgba(195,157,245,.1)}
+.upload-zone strong{color:#eadcff}
+.upload-zone .hint{display:block;margin-top:5px;font-size:.78rem;color:#9d8fba}
+.upload-zone.locked{display:none}
+.storage-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.storage-panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.storage-panel h3{margin:0 0 12px;font-size:.98rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pill{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#bfa9e2;
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);
+      padding:2px 7px;border-radius:5px;font-weight:600}
+.file-list{display:flex;flex-direction:column;gap:8px;min-height:56px}
+.file-empty{color:#8f83aa;font-size:.84rem;padding:10px 2px}
+.file-item{
+  display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;
+  background:var(--panel-2);border:1px solid rgba(255,255,255,.07);
+}
+.file-item img{width:46px;height:46px;object-fit:cover;border-radius:7px;flex:none;background:#241a3d}
+.file-thumb{width:46px;height:46px;border-radius:7px;flex:none;display:grid;place-items:center;
+            background:rgba(255,120,150,.12);color:#ff9db1;font-size:20px}
+.file-info{min-width:0;flex:1}
+.file-info b{display:block;font-size:.8rem;font-weight:600;color:#efe6ff;
+             white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-info span{font-size:.72rem;color:#9c8fba}
+.file-actions{display:flex;gap:6px;flex:none}
+.mini-btn{
+  border:1px solid rgba(195,157,245,.35);background:rgba(255,255,255,.05);
+  color:#dccbf5;font:600 11px system-ui,sans-serif;padding:5px 9px;border-radius:7px;
+  text-decoration:none;cursor:pointer;white-space:nowrap;
+}
+.mini-btn:hover{background:rgba(195,157,245,.16)}
+.mini-btn.danger{border-color:rgba(255,120,140,.4);color:#ffa9b8}
+.mini-btn.danger:hover{background:rgba(255,120,140,.14)}
+
+/* ---- toast ---- */
+#toasts{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+        display:flex;flex-direction:column;gap:8px;z-index:9999;width:min(560px,92vw)}
+.toast{
+  padding:12px 16px;border-radius:11px;font-size:13px;
+  background:rgba(30,22,50,.97);border:1px solid rgba(195,157,245,.4);
+  color:#efe6ff;box-shadow:0 18px 44px -18px rgba(0,0,0,.9);
+  animation:toastIn .18s ease;
+}
+.toast.err{border-color:rgba(255,110,130,.55);color:#ffd3da}
+.toast code{display:block;margin-top:7px;padding:8px 9px;border-radius:6px;
+            background:rgba(0,0,0,.4);color:#c9f0d8;font-size:11.5px;word-break:break-all}
+@keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+@media (max-width:880px){
+  .svc-grid{grid-template-columns:1fr 1fr}
+  .storage-grid{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .svc-grid{grid-template-columns:1fr}
+  .auth-area .who{max-width:120px;overflow:hidden}
+}

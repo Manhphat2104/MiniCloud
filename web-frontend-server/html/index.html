@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MyMiniCloud - Home</title>
+  <link rel="stylesheet" href="/assets/portal.css" />
   <style>
     :root{
       --bg:#0c0916;
@@ -159,11 +160,11 @@
       <nav class="nav">
         <a href="/blog/">Blog cá nhân</a>
         <a href="/students/">Sinh viên</a>
+        <a href="#infrastructure">Hạ tầng</a>
+        <a href="#storage">Kho tài liệu</a>
       </nav>
       <span class="spacer"></span>
-      <nav class="nav-right">
-        <a href="/" aria-current="page">Trang chủ</a>
-      </nav>
+      <span id="authArea" class="auth-area"></span>
     </div>
   </header>
 
@@ -192,6 +193,45 @@
       </div>
       <div class="hero-art">
         <img src="/assets/hero.svg" alt="" width="800" height="600" />
+      </div>
+    </section>
+
+    <!-- Mo rong: 9 server bat buoc + trang thai truc tiep -->
+    <section class="portal-section" id="infrastructure">
+      <div class="section-head">
+        <div>
+          <h2>Hạ tầng đang vận hành</h2>
+          <p class="svc-summary" id="svcSummary">Đang kiểm tra 9 máy chủ…</p>
+        </div>
+        <button class="ghost-btn" id="svcRefresh" type="button">↻ Kiểm tra lại</button>
+      </div>
+      <div class="svc-grid" id="svcGrid"></div>
+    </section>
+
+    <!-- Mo rong: kho tai lieu MinIO -->
+    <section class="portal-section" id="storage">
+      <div class="section-head">
+        <div>
+          <h2>Kho tài liệu</h2>
+          <p>Ảnh lưu ở bucket công khai, PDF lưu ở bucket riêng tư trên MinIO. <span id="storageRole"></span></p>
+        </div>
+      </div>
+
+      <div class="upload-zone locked" id="uploadZone" role="button" tabindex="0">
+        <strong>Kéo thả file vào đây</strong> hoặc bấm để chọn
+        <span class="hint">Ảnh (JPG, PNG, WEBP, GIF) và PDF · tối đa 10 MB · cần tài khoản admin</span>
+        <input id="fileInput" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.pdf" hidden />
+      </div>
+
+      <div class="storage-grid">
+        <div class="storage-panel">
+          <h3>Ảnh <span class="pill">profile-pics · public</span></h3>
+          <div class="file-list" id="imgList"><div class="file-empty">Đang tải…</div></div>
+        </div>
+        <div class="storage-panel">
+          <h3>Tài liệu PDF <span class="pill">documents · private</span></h3>
+          <div class="file-list" id="pdfList"><div class="file-empty">Đang tải…</div></div>
+        </div>
       </div>
     </section>
 
@@ -251,5 +291,8 @@
     <span>&copy; 2026 MyMiniCloud</span>
     <span>9 máy chủ · Docker Compose · cloud-net</span>
   </footer>
+
+  <div id="toasts"></div>
+  <script src="/assets/portal.js"></script>
 </body>
 </html>

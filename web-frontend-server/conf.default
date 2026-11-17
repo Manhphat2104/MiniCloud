@@ -4,6 +4,16 @@ server {
 
   root /usr/share/nginx/html;
   index index.html;
+  client_max_body_size 20m;
+
+  # Mo rong: cho portal (trang chu) goi API khi truy cap truc tiep :8080/:8082
+  location /api/ {
+    proxy_pass http://application-backend-server:8081/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
 
   # Mo rong 10: cho biet request duoc phuc vu boi web server nao
   add_header X-Served-By $hostname always;

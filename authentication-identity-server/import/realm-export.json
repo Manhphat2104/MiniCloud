@@ -48,6 +48,22 @@
   "maxSecondaryAuthFailures" : 0,
   "roles" : {
     "realm" : [ {
+      "id" : "9e418717-8a25-4c66-b1e9-41edf62769e0",
+      "name" : "viewer",
+      "description" : "MiniCloud viewer role",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "c78043c5-b2f6-473e-aae8-3065031fd8fd",
+      "attributes" : { }
+    }, {
+      "id" : "7caefd1b-2f3c-43d0-aaf8-4b9587090390",
+      "name" : "admin",
+      "description" : "MiniCloud admin role",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "c78043c5-b2f6-473e-aae8-3065031fd8fd",
+      "attributes" : { }
+    }, {
       "id" : "98e6c1c5-f6af-4e75-9190-68c4fb163935",
       "name" : "uma_authorization",
       "description" : "${role_uma_authorization}",
@@ -279,6 +295,7 @@
       } ],
       "security-admin-console" : [ ],
       "admin-cli" : [ ],
+      "web-portal" : [ ],
       "account-console" : [ ],
       "broker" : [ {
         "id" : "73f1ddb3-393b-425f-8d6a-a9cc72e2f6fe",
@@ -429,7 +446,7 @@
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-realm_523h0167" ],
+    "realmRoles" : [ "admin", "default-roles-realm_523h0167" ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {
@@ -452,7 +469,7 @@
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-realm_523h0167" ],
+    "realmRoles" : [ "viewer", "default-roles-realm_523h0167" ],
     "notBefore" : 0,
     "groups" : [ ]
   } ],
@@ -709,6 +726,40 @@
         "jsonType.label" : "String"
       }
     } ],
+    "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "basic", "email" ],
+    "optionalClientScopes" : [ "address", "phone", "organization", "offline_access", "microprofile-jwt" ]
+  }, {
+    "id" : "b03fb14e-ba9c-4650-bb10-b1a4405ccb85",
+    "clientId" : "web-portal",
+    "name" : "MiniCloud Web Portal",
+    "description" : "Dang nhap portal + phan quyen chinh sua",
+    "surrogateAuthRequired" : false,
+    "enabled" : true,
+    "alwaysDisplayInConsole" : false,
+    "clientAuthenticatorType" : "client-secret",
+    "secret" : "web-portal-secret-523H0167",
+    "redirectUris" : [ "http://localhost:8080/api/session/callback", "http://3.0.181.78/api/session/callback", "http://localhost:8082/api/session/callback", "http://localhost/api/session/callback" ],
+    "webOrigins" : [ "+" ],
+    "notBefore" : 0,
+    "bearerOnly" : false,
+    "consentRequired" : false,
+    "standardFlowEnabled" : true,
+    "implicitFlowEnabled" : false,
+    "directAccessGrantsEnabled" : false,
+    "serviceAccountsEnabled" : false,
+    "publicClient" : false,
+    "frontchannelLogout" : false,
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "realm_client" : "false",
+      "backchannel.logout.session.required" : "true",
+      "post.logout.redirect.uris" : "http://localhost/*##http://3.0.181.78/*",
+      "pkce.code.challenge.method" : "S256",
+      "backchannel.logout.revoke.offline.tokens" : "false"
+    },
+    "authenticationFlowBindingOverrides" : { },
+    "fullScopeAllowed" : true,
+    "nodeReRegistrationTimeout" : -1,
     "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "basic", "email" ],
     "optionalClientScopes" : [ "address", "phone", "organization", "offline_access", "microprofile-jwt" ]
   } ],

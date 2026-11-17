@@ -23,6 +23,7 @@
   <main class="wrap">
   
     <h1>Danh sách sinh viên</h1>
+    <p class="perm-note" id="permNote" hidden></p>
 
     <h2>Bài 2 · students.json</h2>
     <section class="panel"><div id="json-table" class="state">Đang tải…</div></section>
@@ -90,6 +91,7 @@
     const formErr = document.getElementById('formErr');
     let dbRows = [];
     let editingId = null;
+    let IS_ADMIN = false;
 
     async function loadDb() {
       try {
@@ -103,9 +105,9 @@
           dbRows.map((r) => `<tr>
             <td>${esc(r.student_id)}</td><td>${esc(r.fullname)}</td>
             <td>${fmtDate(r.dob)}</td><td>${esc(r.major)}</td>
-            <td class="actions">
+            <td class="actions">${IS_ADMIN ? `
               <button class="btn btn-sm" data-act="edit" data-id="${r.id}" type="button">Sửa</button>
-              <button class="btn btn-sm btn-danger" data-act="del" data-id="${r.id}" type="button">Xóa</button>
+              <button class="btn btn-sm btn-danger" data-act="del" data-id="${r.id}" type="button">Xóa</button>` : ''}
             </td></tr>`).join(''));
       } catch (e) { showError($db, 'Không tải được dữ liệu (' + e.message + ').'); }
     }
@@ -162,8 +164,22 @@
     document.getElementById('addBtn').addEventListener('click', () => openForm(null));
     document.getElementById('cancelBtn').addEventListener('click', () => dlg.close());
 
+    async function loadMe() {
+      try {
+        const res = await fetch('/api/session/me', { cache: 'no-store' });
+        const d = await res.json();
+        IS_ADMIN = !!d.is_admin;
+      } catch (e) { IS_ADMIN = false; }
+      if (!IS_ADMIN) {
+        document.getElementById('addBtn').hidden = true;
+        const n = document.getElementById('permNote');
+        n.hidden = false;
+        n.innerHTML = 'Chế độ chỉ xem — chỉ tài khoản <b>admin</b> được thêm/sửa/xoá. <a href="/">Đăng nhập tại trang chủ</a>.';
+      }
+    }
+
     loadJson();
-    loadDb();
+    loadMe().then(loadDb);
   </script>
 </body>
 </html>

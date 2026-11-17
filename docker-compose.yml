@@ -5,6 +5,7 @@ networks:
 volumes:
   loki-data:
   grafana-data:
+  prometheus-data:
 
 services:
   web-frontend-server:
@@ -40,9 +41,19 @@ services:
         aliases: [app-server, app]
     ports: ["8085:8081"]
     environment:
-      OIDC_ISSUER: "http://localhost:8081/realms/realm_523H0167"
+      OIDC_ISSUER: "http://${PUBLIC_HOST:-localhost}:8081/realms/realm_523H0167"
       OIDC_JWKS_URL: "http://authentication-identity-server:8080/realms/realm_523H0167/protocol/openid-connect/certs"
       OIDC_AUDIENCE: "account"
+      OIDC_INTERNAL: "http://authentication-identity-server:8080/realms/realm_523H0167"
+      OIDC_CLIENT_ID: "web-portal"
+      OIDC_CLIENT_SECRET: "web-portal-secret-523H0167"
+      PUBLIC_URL: "http://${PUBLIC_HOST:-localhost}"
+      FLASK_SECRET_KEY: "minicloud-523H0167-demo-secret"
+      MINIO_ENDPOINT: "http://object-storage-server:9000"
+      MINIO_ACCESS_KEY: "minioadmin"
+      MINIO_SECRET_KEY: "minioadmin"
+      MINIO_PUBLIC_URL: "http://${PUBLIC_HOST:-localhost}:9000"
+      MAX_UPLOAD_MB: "10"
       DB_HOST: "relational-database-server"
       DB_USER: "root"
       DB_PASSWORD: "root"
@@ -57,6 +68,7 @@ services:
       MARIADB_DATABASE: minicloud
     volumes:
       - ./relational-database-server/init:/docker-entrypoint-initdb.d:ro 
+      - ./relational-database-server/data:/var/lib/mysql
     ports: ["3306:3306"]
     networks:
       cloud-net:
@@ -66,17 +78,18 @@ services:
   authentication-identity-server:
     image: quay.io/keycloak/keycloak:latest
     container_name: authentication-identity-server
-    command: ["start-dev"]
+    command: ["start-dev", "--import-realm"]
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-      KC_HOSTNAME: "http://localhost:8081"
+      KC_HOSTNAME: "http://${PUBLIC_HOST:-localhost}:8081"
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_ENABLED: "true"
       KC_PROXY_HEADERS: "xforwarded"
     ports: ["8081:8080"]
     volumes:
       - ./authentication-identity-server/data:/opt/keycloak/data
+      - ./authentication-identity-server/import:/opt/keycloak/data/import:ro
     networks:
       cloud-net:
         aliases: [keycloak, auth]
@@ -128,6 +141,7 @@ services:
     ports: ["9090:9090"]
     volumes:
       - ./monitoring-prometheus-server/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
     networks:
       cloud-net:
         aliases: [prometheus]

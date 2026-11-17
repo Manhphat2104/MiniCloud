@@ -3,3 +3,6 @@ object-storage-server/data/*
 !object-storage-server/data/.gitkeep
 relational-database-server/data/
 
+
+# Keycloak H2 runtime (chi commit realm export trong authentication-identity-server/import/)
+authentication-identity-server/data/
