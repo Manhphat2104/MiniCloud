@@ -72,7 +72,7 @@ Tổng cộng **13 container** (9 server + web2 + node-exporter + Loki + Promtai
 ```
 huynhmanhphatminiclouddemo/
 ├── docker-compose.yml
-├── README.md · TEST-RESULTS.md · HUONG-DAN-MO-RONG.md
+├── README.md · TEST-RESULTS.md · HUONG-DAN-MO-RONG.md · NHUNG-GI-DA-LAM.md
 ├── web-frontend-server/                 # 1. Web (Dockerfile + Nginx + HTML)
 │   ├── conf.default                     # có location /api/ để portal chạy cả :8080
 │   └── html/
@@ -510,3 +510,4 @@ Luồng portal dùng **Authorization Code + PKCE**:
 
 Log kiểm thử chi tiết: `TEST-RESULTS.md`.
 Hướng dẫn demo từng mục: `HUONG-DAN-MO-RONG.md`.
+Tổng hợp toàn bộ việc đã làm: `NHUNG-GI-DA-LAM.md`.
