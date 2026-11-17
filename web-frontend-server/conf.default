@@ -1,3 +1,10 @@
+# Chi HTML khong cache; asset (css/js/anh) van cache o trinh duyet
+map $uri $cache_control {
+  default        "public, max-age=3600";
+  "~^/$"         "no-store, no-cache, must-revalidate";
+  "~\.html$"     "no-store, no-cache, must-revalidate";
+}
+
 server {
   listen 80;
   server_name _;
@@ -22,8 +29,9 @@ server {
 
   # Mo rong 10: cho biet request duoc phuc vu boi web server nao
   add_header X-Served-By $hostname always;
-  # Khong cache HTML -> F5 la thay ngay server khac (round robin)
-  add_header Cache-Control "no-store, no-cache, must-revalidate" always;
+  # HTML khong cache (F5 la thay server khac), asset van cache de khong
+  # lam lech luot round robin giua cac lan tai trang
+  add_header Cache-Control $cache_control always;
 
   location / { try_files $uri $uri/ =404; }
 
