@@ -6,3 +6,9 @@ relational-database-server/data/
 
 # Keycloak H2 runtime (chi commit realm export trong authentication-identity-server/import/)
 authentication-identity-server/data/
+
+# Tai lieu lam viec: chi commit README.md
+/TEST-RESULTS.md
+/HUONG-DAN-MO-RONG.md
+/NHUNG-GI-DA-LAM.md
+/BANG-THAY-DOI.md
